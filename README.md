@@ -23,11 +23,8 @@ This project aims to build a robust chat application using a microservices archi
 4. Responsive design for various devices and screen resolutions.
 5. Integration with backend services.
 
-## Contributing
-We welcome contributions! Please read our [CONTRIBUTING.md](LINK_TO_CONTRIBUTING.md) for details on our code of conduct and the submission process.
-
 ## Project Status
 For the most current information on the project's development and to view the code, please visit the project's GitHub page at [ChatMicroserviceProject](https://github.com/Evgheni-Cernev/ChatMicroserviceProject).
 
-For a detailed overview of completed and upcoming features, please refer to the `FEATURES.md` file within the repository.
+For a detailed overview of completed and upcoming features, please refer to the [FEATURES.md]([https://github.com/Evgheni-Cernev/ChatMicroserviceProject](https://github.com/Evgheni-Cernev/ChatMicroserviceProject/blob/main/FEATURES.md))  file within the repository.
 
