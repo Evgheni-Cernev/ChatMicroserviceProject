@@ -22,9 +22,3 @@ This project aims to build a robust chat application using a microservices archi
 3. Interface for the friends list, adding friends, and messaging.
 4. Responsive design for various devices and screen resolutions.
 5. Integration with backend services.
-
-## Project Status
-For the most current information on the project's development and to view the code, please visit the project's GitHub page at [ChatMicroserviceProject](https://github.com/Evgheni-Cernev/ChatMicroserviceProject).
-
-For a detailed overview of completed and upcoming features, please refer to the [FEATURES.md]([https://github.com/Evgheni-Cernev/ChatMicroserviceProject](https://github.com/Evgheni-Cernev/ChatMicroserviceProject/blob/main/FEATURES.md))  file within the repository.
-
