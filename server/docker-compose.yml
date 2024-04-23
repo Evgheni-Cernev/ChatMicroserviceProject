@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: ./user-service  
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://postgres:password@user-db:5432/userdb
+    ports:
+      - "3006:3006"
+    depends_on:
+      - user-db
+    volumes:
+      - ./user-service:/usr/src/app  
+      - /usr/src/app/node_modules 
+    command: npm run dev
+
+  chat-service:
+    build:
+      context: ./chat-service  
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://postgres:password@chat-db:5432/chatdb
+    ports:
+      - "3008:3008"
+    depends_on:
+      - chat-db
+    volumes:
+      - ./chat-service:/usr/src/app  
+      - /usr/src/app/node_modules  
+    command: npm run dev
+
+  user-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_postgres_data:/var/lib/postgresql/data
+
+  chat-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: chatdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - chat_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  user_postgres_data:
+  chat_postgres_data:

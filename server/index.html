@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Service Test Page</title>
+</head>
+<body>
+    <h1>Chat Service API Tester</h1>
+
+    <h2>Create Room</h2>
+    <input type="number" id="user1Id" placeholder="User 1 ID">
+    <input type="number" id="user2Id" placeholder="User 2 ID">
+    <button onclick="createRoom()">Create Room</button>
+
+    <h2>Send Message</h2>
+    <input type="number" id="roomId" placeholder="Room ID">
+    <input type="number" id="senderId" placeholder="Sender ID">
+    <input type="text" id="content" placeholder="Message Content">
+    <button onclick="sendMessage()">Send Message</button>
+
+    <h2>Get Messages</h2>
+    <input type="number" id="getMessageRoomId" placeholder="Room ID">
+    <button onclick="getMessages()">Get Messages</button>
+
+    <h2>Get Rooms</h2>
+    <input type="number" id="userId" placeholder="User ID">
+    <button onclick="getRooms()">Get Rooms</button>
+
+    <script>
+        const apiUrl = 'http://localhost:3008/api';
+
+        function createRoom() {
+            const user1Id = document.getElementById('user1Id').value;
+            const user2Id = document.getElementById('user2Id').value;
+
+            fetch(`${apiUrl}/rooms`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user1Id, user2Id })
+            })
+            .then(response => response.json())
+            .then(data => alert(JSON.stringify(data)))
+            .catch(error => alert('Error: ' + error));
+        }
+
+        function sendMessage() {
+            const roomId = document.getElementById('roomId').value;
+            const senderId = document.getElementById('senderId').value;
+            const content = document.getElementById('content').value;
+
+            fetch(`${apiUrl}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ roomId, senderId, content })
+            })
+            .then(response => response.json())
+            .then(data => alert(JSON.stringify(data)))
+            .catch(error => alert('Error: ' + error));
+        }
+
+        function getMessages() {
+            const roomId = document.getElementById('getMessageRoomId').value;
+
+            fetch(`${apiUrl}/messages/${roomId}`)
+            .then(response => response.json())
+            .then(data => alert(JSON.stringify(data)))
+            .catch(error => alert('Error: ' + error));
+        }
+
+        function getRooms() {
+            const userId = document.getElementById('userId').value;
+
+            fetch(`${apiUrl}/rooms/${userId}`)
+            .then(response => response.json())
+            .then(data => alert(JSON.stringify(data)))
+            .catch(error => alert('Error: ' + error));
+        }
+    </script>
+</body>
+</html>
