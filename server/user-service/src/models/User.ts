@@ -18,6 +18,11 @@ export default (sequelize: Sequelize) => {
       allowNull: false,
       unique: true,
     },
+    email: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+      unique: true,
+    },
     password: {
       type: DataTypes.STRING(255),
       allowNull: false

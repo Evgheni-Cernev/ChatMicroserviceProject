@@ -9,7 +9,7 @@ interface Config {
 }
 
 const config: Config = {
-  port: parseInt(process.env.PORT || '3000', 10),
+  port: parseInt(process.env.PORT || '3008', 10),
   databaseUrl: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/chatdb',
   jwtSecret: process.env.JWT_SECRET || 'your_secret_here',
   env: process.env.NODE_ENV || 'development'

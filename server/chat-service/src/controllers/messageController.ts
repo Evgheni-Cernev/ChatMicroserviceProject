@@ -5,7 +5,7 @@ export const sendMessage = async (req: Request, res: Response) => {
   const { roomId, senderId, content } = req.body;
   try {
     const message = await MessageService.sendMessage(roomId, senderId, content);
-    req.io.to(roomId.toString()).emit("new_message", message);
+    req.io.emit('sendMessage', { roomId, message });
     res.status(201).json(message);
   } catch (error: any) {
     res.status(500).json({ message: error.message });

@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "34f8d207-1d70-42c4-bded-e15f0b720396",
+		"name": "Chat API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9312873",
+		"_collection_link": "https://cloudy-shuttle-5768.postman.co/workspace/IS_Microservices~495a2fc4-11d1-446e-b4f0-e48c14a22614/collection/9312873-34f8d207-1d70-42c4-bded-e15f0b720396?action=share&source=collection_link&creator=9312873"
+	},
+	"item": [
+		{
+			"name": "CreateChat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user1Id\": 14,\n    \"user2Id\": 16\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/chat/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"chat",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send New Message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"sdfddfddf\",\n    \"roomId\": \"3\",\n    \"senderId\": \"14\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/messages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Chat Rooms By user ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/chats/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"chats",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Chat Messages RoomID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/chats/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"chats",
+						"14"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

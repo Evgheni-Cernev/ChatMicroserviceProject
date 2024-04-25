@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 export interface MessageAttributes {
   id?: number;
@@ -8,17 +8,13 @@ export interface MessageAttributes {
   timestamp: Date;
 }
 
-interface MessageInstance extends Model<MessageAttributes, MessageAttributes> {
-  id: number;
-  roomId: number;
-  senderId: number;
-  content: string;
-  timestamp: Date;
-}
+export interface MessageInstance
+  extends Model<MessageAttributes, MessageAttributes>,
+    MessageAttributes {}
 
 export default (sequelize: Sequelize) => {
   const Message = sequelize.define<MessageInstance>(
-    'Message', 
+    "Message",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -29,9 +25,9 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Rooms',
-          key: 'id'
-        }
+          model: "Rooms",
+          key: "id",
+        },
       },
       senderId: {
         type: DataTypes.INTEGER,
@@ -39,16 +35,16 @@ export default (sequelize: Sequelize) => {
       },
       content: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
       },
       timestamp: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-      }
-    }, 
+        defaultValue: DataTypes.NOW,
+      },
+    },
     {
-      tableName: 'Messages',
-      timestamps: false 
+      tableName: "Messages",
+      timestamps: false,
     }
   );
 

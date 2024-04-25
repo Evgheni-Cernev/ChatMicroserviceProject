@@ -1,0 +1,6 @@
+{
+    "url": "http://localhost:3008",
+    "subscribeToRoom": "socket.emit('subscribeToRoom', roomId);",
+    "newMessages": " socket.on('sendMessage', ({ message }) => console.log('connected', message));"
+
+}

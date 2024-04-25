@@ -1,13 +1,14 @@
-import bcrypt from 'bcrypt';
-import { User } from '../models';
-import { generateToken } from '../utils/tokenUtils';
+import bcrypt from "bcrypt";
+import { User } from "../models";
+import { generateToken } from "../utils/tokenUtils";
 
 export class UserService {
-  async createUser(username: string, password: string) {
+  async createUser(username: string, password: string, email: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       username,
-      password: hashedPassword
+      password: hashedPassword,
+      email
     });
     return user;
   }
@@ -15,22 +16,30 @@ export class UserService {
   async authenticateUser(username: string, password: string) {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-        throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-        throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     const token = generateToken(user.password);
-    return {token, user_id: user.id};
-}
+    return { token, user_id: user.id };
+  }
 
   async getUserById(userId: number) {
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
+    }
+    return user;
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      throw new Error("User not found");
     }
     return user;
   }
@@ -38,7 +47,7 @@ export class UserService {
   async updateUser(userId: number, username?: string, password?: string) {
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     user.username = username || user.username;

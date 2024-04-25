@@ -1,0 +1,90 @@
+{
+	"info": {
+		"_postman_id": "c266649a-4567-4dc2-9477-c18669eea6a0",
+		"name": "User API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9312873",
+		"_collection_link": "https://cloudy-shuttle-5768.postman.co/workspace/IS_Microservices~495a2fc4-11d1-446e-b4f0-e48c14a22614/collection/9312873-c266649a-4567-4dc2-9477-c18669eea6a0?action=share&source=collection_link&creator=9312873"
+	},
+	"item": [
+		{
+			"name": "profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3003/user/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"user",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTcxNDAxMzQ2MiwiZXhwIjoxNzE0MDE3MDYyfQ.V5c-0_3OnrPMC8RKLjGU8fPhpf1aZc4NzLUotkJFkh8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"John Doe\",\n    \"password\": \"password124\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/user/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"user",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

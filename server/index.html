@@ -1,85 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Service Test Page</title>
-</head>
-<body>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  </head>
+  <body>
     <h1>Chat Service API Tester</h1>
 
     <h2>Create Room</h2>
-    <input type="number" id="user1Id" placeholder="User 1 ID">
-    <input type="number" id="user2Id" placeholder="User 2 ID">
+    <input type="number" id="user1Id" placeholder="User 1 ID" />
+    <input type="number" id="user2Id" placeholder="User 2 ID" />
     <button onclick="createRoom()">Create Room</button>
 
-    <h2>Send Message</h2>
-    <input type="number" id="roomId" placeholder="Room ID">
-    <input type="number" id="senderId" placeholder="Sender ID">
-    <input type="text" id="content" placeholder="Message Content">
+    <h2>All Rooms</h2>
+    <button onclick="getAllRooms()">Show All Rooms</button>
+    <form id="roomsList"></form>
+
+    <h2>Write Message</h2>
+    <input type="number" id="sendMessageRoomId" placeholder="Room ID" />
+    <input type="number" id="senderId" placeholder="Sender ID" />
+    <input type="text" id="messageContent" placeholder="Message Content" />
     <button onclick="sendMessage()">Send Message</button>
 
-    <h2>Get Messages</h2>
-    <input type="number" id="getMessageRoomId" placeholder="Room ID">
-    <button onclick="getMessages()">Get Messages</button>
-
-    <h2>Get Rooms</h2>
-    <input type="number" id="userId" placeholder="User ID">
-    <button onclick="getRooms()">Get Rooms</button>
+    <h2>Messages in Room</h2>
+    <div id="messages"></div>
 
     <script>
-        const apiUrl = 'http://localhost:3008/api';
+      const apiUrl = "http://localhost:3008/api";
+      const socket = io("http://localhost:3008");
 
-        function createRoom() {
-            const user1Id = document.getElementById('user1Id').value;
-            const user2Id = document.getElementById('user2Id').value;
+      function createRoom() {
+        const user1Id = document.getElementById("user1Id").value;
+        const user2Id = document.getElementById("user2Id").value;
 
-            fetch(`${apiUrl}/rooms`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user1Id, user2Id })
-            })
-            .then(response => response.json())
-            .then(data => alert(JSON.stringify(data)))
-            .catch(error => alert('Error: ' + error));
-        }
+        fetch(`${apiUrl}/rooms`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user1Id, user2Id }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(JSON.stringify(data));
+            getAllRooms();
+          })
+          .catch((error) => alert("Error: " + error));
+      }
 
-        function sendMessage() {
-            const roomId = document.getElementById('roomId').value;
-            const senderId = document.getElementById('senderId').value;
-            const content = document.getElementById('content').value;
+      function getAllRooms() {
+        fetch(`${apiUrl}/rooms/3`)
+          .then((response) => response.json())
+          .then((data) => {
+            const roomsList = document.getElementById("roomsList");
+            roomsList.innerHTML = "";
+            data.forEach((room, index) => {
+              const label = document.createElement("label");
+              const radioButton = document.createElement("input");
+              radioButton.type = "radio";
+              radioButton.name = "room";
+              radioButton.value = room.id;
+              radioButton.onclick = () => {
+                document.getElementById("sendMessageRoomId").value = room.id;
+                subscribeToRoom(room.id);
+              };
+              label.appendChild(radioButton);
+              label.appendChild(document.createTextNode(` Room ${room.id}`));
+              roomsList.appendChild(label);
 
-            fetch(`${apiUrl}/messages`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ roomId, senderId, content })
-            })
-            .then(response => response.json())
-            .then(data => alert(JSON.stringify(data)))
-            .catch(error => alert('Error: ' + error));
-        }
+              if (index === 0) {
+                radioButton.checked = true;
+                document.getElementById("sendMessageRoomId").value = room.id;
+                subscribeToRoom(room.id);
+              }
+            });
+          })
+          .catch((error) => alert("Error: " + error));
+      }
 
-        function getMessages() {
-            const roomId = document.getElementById('getMessageRoomId').value;
+      function sendMessage() {
+        const roomId = document.getElementById("sendMessageRoomId").value;
+        const senderId = document.getElementById("senderId").value;
+        const content = document.getElementById("messageContent").value;
 
-            fetch(`${apiUrl}/messages/${roomId}`)
-            .then(response => response.json())
-            .then(data => alert(JSON.stringify(data)))
-            .catch(error => alert('Error: ' + error));
-        }
+        fetch(`${apiUrl}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ roomId, senderId, content }),
+        }).catch((error) => alert("Error: " + error));
+      }
 
-        function getRooms() {
-            const userId = document.getElementById('userId').value;
+      function subscribeToRoom(roomId) {
+        socket.emit("subscribeToRoom", roomId);
+        document.getElementById("messages").innerHTML = ""; // Clear previous messages
+        alert(`Subscribed to room ${roomId}`);
+      }
 
-            fetch(`${apiUrl}/rooms/${userId}`)
-            .then(response => response.json())
-            .then(data => alert(JSON.stringify(data)))
-            .catch(error => alert('Error: ' + error));
-        }
+      socket.on("sendMessage", ({ message }) => {
+        console.log("connected", message);
+        const messagesElement = document.getElementById("messages");
+        messagesElement.innerHTML += `<div>${message.senderId}: ${message.content}</div>`;
+      });
+
+      // Initialize room list on page load
+      getAllRooms();
     </script>
-</body>
+  </body>
 </html>

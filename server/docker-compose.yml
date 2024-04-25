@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  gateway-service:
+    build:
+      context: ./gateway-service  
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    depends_on:
+      - user-service
+      - chat-service
+      - auth-service
+    volumes:
+      - ./gateway-service:/usr/src/app  
+      - /usr/src/app/node_modules 
   user-service:
     build:
       context: ./user-service  
@@ -33,6 +49,19 @@ services:
       - /usr/src/app/node_modules  
     command: npm run dev
 
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "3009:3009"
+    depends_on:
+      - auth-db
+    volumes:
+      - ./auth-service:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run dev
+
   user-db:
     image: postgres:13-alpine
     environment:
@@ -54,6 +83,12 @@ services:
       - "5433:5432"
     volumes:
       - chat_postgres_data:/var/lib/postgresql/data
+
+  auth-db:
+    image: redis
+    command: redis-server --requirepass yourpassword
+    ports:
+      - "6379:6379"
 
 volumes:
   user_postgres_data:

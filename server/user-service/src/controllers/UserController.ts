@@ -6,8 +6,8 @@ const userService = new UserService();
 class UserController {
   async register(req: Request, res: Response) {
     try {
-      const { username, password } = req.body;
-      const user = await userService.createUser(username, password);
+      const { username, password, email } = req.body;
+      const user = await userService.createUser(username, password, email);
       res.status(201).json(user);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -28,6 +28,15 @@ class UserController {
     try {
       const userId = parseInt(req.params.userId);
       const user = await userService.getUserById(userId);
+      res.json(user);
+    } catch (error: any) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  async getUserByEmail(req: Request, res: Response) {
+    try {
+      const user = await userService.getUserByEmail(req.params.email);
       res.json(user);
     } catch (error: any) {
       res.status(404).json({ message: error.message });

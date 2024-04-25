@@ -6,11 +6,7 @@ export interface RoomAttributes {
   user2Id: number;
 }
 
-interface RoomInstance extends Model<RoomAttributes, RoomAttributes> {
-  id: number;
-  user1Id: number;
-  user2Id: number;
-}
+interface RoomInstance extends Model<RoomAttributes, RoomAttributes>, RoomAttributes {}
 
 export default (sequelize: Sequelize) => {
   const Room = sequelize.define<RoomInstance>(
