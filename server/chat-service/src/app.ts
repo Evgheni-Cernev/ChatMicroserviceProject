@@ -1,6 +1,6 @@
 import express from "express";
 import { createServer } from "http";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import { json, urlencoded } from "body-parser";
 import { messageRoutes, roomRoutes } from "./routes";
 import config from "./config/config";
@@ -8,13 +8,23 @@ import { errorHandler } from "./utils/errorHandler";
 import logger from "./utils/logger";
 import cors from "cors";
 import { initializeSocket } from "./config/socketConfig";
-
+import { initializeRedis } from "./utils/redisUtil";
+import { setupMessageWatcher } from "./services/messageWatcher";
+import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
 const io = initializeSocket(httpServer);
+
+initializeRedis()
+  .then(() => {
+    console.log("Redis is ready");
+  })
+  .catch((err) => {
+    console.error("Failed to connect to Redis", err);
+  });
 
 app.use(cors());
 app.use(
@@ -37,7 +47,9 @@ app.use("/api/messages", messageRoutes(io));
 
 app.use(errorHandler);
 
-const PORT = config.port ||3009;
+setupMessageWatcher();
+
+const PORT = config.port || 3009;
 
 httpServer.listen(PORT, () => {
   console.log(`Server and WebSocket server are running on port ${PORT}.`);

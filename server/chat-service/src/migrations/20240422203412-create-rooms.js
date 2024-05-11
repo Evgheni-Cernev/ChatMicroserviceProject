@@ -9,13 +9,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user1Id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+      isDirectMessage: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       },
-      user2Id: {
+      adminUserId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
+      },
+      messageExpirationTime: {
+        type: Sequelize.INTEGER,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
@@ -27,11 +32,6 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    });
-
-    await queryInterface.addIndex('Rooms', ['user1Id', 'user2Id'], {
-      unique: true,
-      name: 'unique_user_pair'
     });
   },
   down: async (queryInterface, Sequelize) => {

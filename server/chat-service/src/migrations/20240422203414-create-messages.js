@@ -26,6 +26,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      filePath: {
+        type: Sequelize.STRING,
+      },
+      fileExtension: {
+        type: Sequelize.STRING,
+      },
       timestamp: {
         allowNull: false,
         type: Sequelize.DATE,

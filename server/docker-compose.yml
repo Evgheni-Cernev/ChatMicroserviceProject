@@ -44,6 +44,7 @@ services:
       - "3008:3008"
     depends_on:
       - chat-db
+      - message-delete-db
     volumes:
       - ./chat-service:/usr/src/app  
       - /usr/src/app/node_modules  
@@ -89,6 +90,11 @@ services:
     command: redis-server --requirepass yourpassword
     ports:
       - "6379:6379"
+  message-delete-db:
+    image: redis
+    command: redis-server --requirepass yourpassword
+    ports:
+      - "6380:6379"
 
 volumes:
   user_postgres_data:

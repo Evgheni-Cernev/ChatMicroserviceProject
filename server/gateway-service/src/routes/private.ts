@@ -1,11 +1,6 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/authMiddleware";
-import {
-  createNewChat,
-  getChatRoomsByUserId,
-  getMessagesByRoomId,
-  sendNewMessage
-} from "../controllers/chatController";
+import * as ChatController from "../controllers/chatController";
 import { getUserById, updateUserById } from "../controllers/userController";
 import { logout } from "../controllers/authController";
 
@@ -20,10 +15,14 @@ router.get("/user/:userId", getUserById);
 router.put("/user/:userId", updateUserById);
 
 //chat
-router.post("/chat/create", createNewChat);
-router.get("/chats/:userId", getChatRoomsByUserId);
-router.get("/messages/:roomId", getMessagesByRoomId);
-router.post("/messages", sendNewMessage);
-
+router.post("/chat/create", ChatController.createNewChat);
+router.post(
+  "/chat/:roomId/:adminUserId",
+  ChatController.setMessageExpirationTime
+);
+router.get("/chats/:userId", ChatController.getChatRoomsByUserId);
+router.get("/messages/:roomId", ChatController.getMessagesByRoomId);
+router.post("/messages", ChatController.sendNewMessage);
+router.get("/file/:fileName", ChatController.getFileByName);
 
 export { router as privateRoutes };

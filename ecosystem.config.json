@@ -1,0 +1,14 @@
+{
+    "apps": [
+      {
+        "name": "my-docker-app",
+        "script": "docker-compose",
+        "args": ["up", "-d"],
+        "cwd": "./server/",
+        "watch": true,
+        "env": {
+          "NODE_ENV": "development"
+        }
+      }
+    ]
+  }

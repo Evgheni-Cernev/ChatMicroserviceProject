@@ -26,7 +26,7 @@ initializeRedis().then(() => {
   console.log('Redis is ready');
 }).catch(err => {
   console.error('Failed to connect to Redis', err);
-});;
+});
 
 app.use(morgan('dev'));
 

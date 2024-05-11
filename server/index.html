@@ -22,6 +22,8 @@
     <input type="number" id="sendMessageRoomId" placeholder="Room ID" />
     <input type="number" id="senderId" placeholder="Sender ID" />
     <input type="text" id="messageContent" placeholder="Message Content" />
+    <input type="file" id="fileInput" />
+    <!-- Input for selecting file -->
     <button onclick="sendMessage()">Send Message</button>
 
     <h2>Messages in Room</h2>
@@ -29,6 +31,7 @@
 
     <script>
       const apiUrl = "http://localhost:3008/api";
+      const getwayApiUrl = "http://localhost:3003";
       const socket = io("http://localhost:3008");
 
       function createRoom() {
@@ -51,7 +54,7 @@
       }
 
       function getAllRooms() {
-        fetch(`${apiUrl}/rooms/3`)
+        fetch(`${apiUrl}/rooms/14`)
           .then((response) => response.json())
           .then((data) => {
             const roomsList = document.getElementById("roomsList");
@@ -84,14 +87,22 @@
         const roomId = document.getElementById("sendMessageRoomId").value;
         const senderId = document.getElementById("senderId").value;
         const content = document.getElementById("messageContent").value;
+        const file = document.getElementById("fileInput").files[0]; // Get the selected file
+
+        // Create FormData object to send data as multipart/form-data
+        const formData = new FormData();
+        formData.append("roomId", roomId);
+        formData.append("senderId", senderId);
+        formData.append("content", content);
+        formData.append("file", file); // Append the file to the FormData object
 
         fetch(`${apiUrl}/messages`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ roomId, senderId, content }),
-        }).catch((error) => alert("Error: " + error));
+          body: formData, // Send FormData object
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => alert("Error: " + error));
       }
 
       function subscribeToRoom(roomId) {
@@ -99,13 +110,43 @@
         document.getElementById("messages").innerHTML = ""; // Clear previous messages
         alert(`Subscribed to room ${roomId}`);
       }
-
-      socket.on("sendMessage", ({ message }) => {
+      socket.on("sendMessage", async ({ message }) => {
         console.log("connected", message);
         const messagesElement = document.getElementById("messages");
-        messagesElement.innerHTML += `<div>${message.senderId}: ${message.content}</div>`;
-      });
+        if (message.filePath) {
+          const messageContainer = document.createElement("div");
+          const imageElement = document.createElement("img");
 
+          const imageUrl = `${apiUrl}/messages/file/${message.filePath}`;
+
+          fetch(imageUrl)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              console.log(response)
+              return response.blob();
+            })
+            .then((blob) => {
+              const objectUrl = URL.createObjectURL(blob);
+              imageElement.src = objectUrl;
+              imageElement.onload = () => URL.revokeObjectURL(objectUrl);
+            })
+            .catch((error) => {
+              console.error("Error fetching image:", error);
+            });
+
+          imageElement.width = 40;
+          imageElement.height = 40;
+          const textElement = document.createElement("div");
+          textElement.textContent = `${message.senderId}: ${message.content}`;
+          messageContainer.appendChild(imageElement);
+          messageContainer.appendChild(textElement);
+          messagesElement.appendChild(messageContainer);
+        } else {
+          messagesElement.innerHTML += `<div>${message.senderId}: ${message.content}</div>`;
+        }
+      });
       // Initialize room list on page load
       getAllRooms();
     </script>

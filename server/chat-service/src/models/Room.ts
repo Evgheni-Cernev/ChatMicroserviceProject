@@ -1,40 +1,44 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize } from "sequelize";
+import { RoomParticipantsAttributes } from "./";
 
 export interface RoomAttributes {
   id?: number;
-  user1Id: number;
-  user2Id: number;
+  isDirectMessage: boolean;
+  adminUserId?: number;
+  messageExpirationTime?: number;
+  participants?: RoomParticipantsAttributes[];
 }
 
-interface RoomInstance extends Model<RoomAttributes, RoomAttributes>, RoomAttributes {}
+interface RoomInstance
+  extends Model<RoomAttributes, RoomAttributes>,
+    RoomAttributes {}
 
 export default (sequelize: Sequelize) => {
   const Room = sequelize.define<RoomInstance>(
-    'Room', 
+    "Room",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      user1Id: {
-        type: DataTypes.INTEGER,
+      isDirectMessage: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: true,
       },
-      user2Id: {
+      adminUserId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-      }
-    }, 
+        allowNull: true,
+      },
+      messageExpirationTime: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+    },
     {
-      tableName: 'Rooms',
+      tableName: "Rooms",
       timestamps: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['user1Id', 'user2Id']
-        }
-      ]
     }
   );
 

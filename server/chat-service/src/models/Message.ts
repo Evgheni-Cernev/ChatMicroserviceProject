@@ -6,6 +6,8 @@ export interface MessageAttributes {
   senderId: number;
   content: string;
   timestamp: Date;
+  filePath?: string;
+  fileExtension?: string;
 }
 
 export interface MessageInstance
@@ -36,6 +38,12 @@ export default (sequelize: Sequelize) => {
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
+      },
+      filePath: {
+        type: DataTypes.STRING,
+      },
+      fileExtension: {
+        type: DataTypes.STRING,
       },
       timestamp: {
         type: DataTypes.DATE,
