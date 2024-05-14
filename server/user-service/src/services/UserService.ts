@@ -1,14 +1,26 @@
 import bcrypt from "bcrypt";
-import { User } from "../models";
+import { User, UserInstance } from "../models";
 import { generateToken } from "../utils/tokenUtils";
+import forge from "node-forge";
+
+const generateKeyPair = () => {
+  const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair(2048);
+  return {
+    publicKey: forge.pki.publicKeyToPem(publicKey),
+    privateKey: forge.pki.privateKeyToPem(privateKey),
+  };
+};
 
 export class UserService {
-  async createUser(username: string, password: string, email: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  async createUser(data: UserInstance) {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const { publicKey, privateKey } = generateKeyPair();
+
     const user = await User.create({
-      username,
+      ...data,
       password: hashedPassword,
-      email
+      publicKey,
+      privateKey,
     });
     return user;
   }
@@ -44,17 +56,74 @@ export class UserService {
     return user;
   }
 
-  async updateUser(userId: number, username?: string, password?: string) {
+  async getUserAll() {
+    const user = await User.findAll({});
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  }
+
+  async updateUser(userId: number, data: UserInstance) {
     const user = await User.findByPk(userId);
     if (!user) {
       throw new Error("User not found");
     }
 
-    user.username = username || user.username;
-    if (password) {
-      user.password = await bcrypt.hash(password, 10);
+    if (data.username) {
+      user.username = data.username;
     }
+    if (data.password) {
+      user.password = await bcrypt.hash(data.password, 10);
+    }
+    if (data.age !== undefined) {
+      user.age = data.age;
+    }
+    if (data.firstName !== undefined) {
+      user.firstName = data.firstName;
+    }
+    if (data.lastName !== undefined) {
+      user.lastName = data.lastName;
+    }
+    if (data.country !== undefined) {
+      user.country = data.country;
+    }
+    if (data.region !== undefined) {
+      user.region = data.region;
+    }
+    if (data.language !== undefined) {
+      user.language = data.language;
+    }
+    if (data.biography !== undefined) {
+      user.biography = data.biography;
+    }
+    if (data.socialLinks !== undefined) {
+      user.socialLinks = data.socialLinks;
+    }
+    if (data.role !== undefined) {
+      user.role = data.role;
+    }
+    if (data.notifications !== undefined) {
+      user.notifications = data.notifications;
+    }
+
     await user.save();
+    return user;
+  }
+
+  async updateAvatar(userId: number, file?: Express.Multer.File) {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (!file) {
+      throw new Error("Avatar file is required");
+    }
+
+    user.avatar = file.filename;
+    await user.save();
+
     return user;
   }
 }

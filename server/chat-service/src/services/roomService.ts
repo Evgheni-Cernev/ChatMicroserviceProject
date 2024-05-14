@@ -1,67 +1,76 @@
-import { Room, Message, RoomParticipants } from "../models";
-import { Op } from "sequelize";
+import sequelize, {
+  Room,
+  Message,
+  RoomParticipants,
+  RoomAttributes,
+} from "../models";
+import { Transaction } from "sequelize";
+
+import axios from "axios";
 
 export const createRoom = async (
   userIds: number[],
   adminUserId: number,
   isDirectMessage: boolean
-) => {
-  const sortedUserIds = userIds.sort((a, b) => a - b);
+): Promise<RoomAttributes> => {
+  const transaction: Transaction = await sequelize.transaction();
 
   try {
-    const existingRoom = await Room.findOne({
+    // Ensure user IDs are unique and sorted
+    const uniqueUserIds = [...new Set(userIds)].sort((a, b) => a - b);
+
+    const rooms: RoomAttributes[] = await Room.findAll({
+      where: { adminUserId },
       include: [
         {
           model: RoomParticipants,
           as: "participants",
-          where: {
-            userId: {
-              [Op.in]: sortedUserIds,
-            },
-          },
+          attributes: ["userId"],
+          required: true,
         },
       ],
+      transaction,
     });
 
-    if (existingRoom) {
-      // Проверяем, совпадает ли количество участников в найденной комнате с ожидаемым количеством
-      const existingParticipantIds = existingRoom.participants?.map(
-        (participant: any) => participant.userId
-      );
-      const missingParticipants = sortedUserIds.filter(
-        (userId) => !existingParticipantIds?.includes(userId)
-      );
+    const matchingRoom = rooms.find((room) => {
+      const participantIds = room.participants
+        ?.map((p) => p.userId)
+        .sort((a, b) => a - b);
+      return JSON.stringify(participantIds) === JSON.stringify(uniqueUserIds);
+    });
 
-      if (missingParticipants.length === 0) {
-        // Все участники уже присутствуют в комнате, поэтому просто возвращаем эту комнату
-        return existingRoom;
-      }
+    if (matchingRoom) {
+      await transaction.commit();
+      return matchingRoom;
     }
-  } catch (error) {
-    console.error("Error while finding existing room:", error);
-    throw new Error("Error while finding existing room.");
-  }
 
-  try {
-    const room = await Room.create({
-      isDirectMessage: isDirectMessage,
-      adminUserId: adminUserId,
-    });
-
-    await Promise.all(
-      sortedUserIds.map((userId) => {
-        return RoomParticipants.create({
-          roomId: room.id as number,
-          userId: userId,
-          role: adminUserId === userId ? "admin" : "participant",
-        });
-      })
+    const room: RoomAttributes = await Room.create(
+      {
+        isDirectMessage,
+        adminUserId,
+      },
+      { transaction }
     );
 
+    await Promise.all(
+      uniqueUserIds.map((userId) =>
+        RoomParticipants.create(
+          {
+            roomId: room.id as number,
+            userId,
+            role: userId === adminUserId ? "admin" : "participant",
+          },
+          { transaction }
+        )
+      )
+    );
+
+    await transaction.commit();
     return room;
   } catch (error) {
-    console.error("Error while creating room:", error);
-    throw new Error("Error while creating room.");
+    await transaction.rollback();
+    console.error("Error while creating or finding room:", error);
+    throw new Error("Error while creating or finding room.");
   }
 };
 
@@ -94,6 +103,40 @@ export const getRoomById = async (roomId: number) => {
     },
     include: [Message],
   });
+};
+export const getRecipientsByRoomId = async (roomId: number) => {
+  try {
+    const room = await Room.findOne({
+      where: { id: roomId },
+      include: [
+        {
+          model: RoomParticipants,
+          as: "participants",
+        },
+      ],
+    });
+
+    if (!room) {
+      throw new Error(`Room with id ${roomId} not found`);
+    }
+
+    const participants = room.participants ?? [];
+
+    const participantsWithKeys = await Promise.all(
+      participants.map(async (participant: any) => {
+        const response = await axios.get(
+          `${process.env.USER_SERVICE_BASE_URL}/profile/${participant.userId}`
+        );
+        const { publicKey } = response.data;
+        return { userId: participant.userId, publicKey };
+      })
+    );
+
+    return participantsWithKeys;
+  } catch (error) {
+    console.error("Error fetching recipients by room ID:", error);
+    throw error;
+  }
 };
 
 export const setMessageExpirationTime = async (

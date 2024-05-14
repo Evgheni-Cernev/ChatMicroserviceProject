@@ -4,7 +4,7 @@ export interface MessageAttributes {
   id?: number;
   roomId: number;
   senderId: number;
-  content: string;
+  content?: string;
   timestamp: Date;
   filePath?: string;
   fileExtension?: string;
@@ -36,8 +36,8 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
       content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+        type: DataTypes.STRING(2048),
+        allowNull: true,
       },
       filePath: {
         type: DataTypes.STRING,

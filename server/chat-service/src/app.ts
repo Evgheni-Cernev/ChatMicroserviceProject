@@ -10,13 +10,13 @@ import cors from "cors";
 import { initializeSocket } from "./config/socketConfig";
 import { initializeRedis } from "./utils/redisUtil";
 import { setupMessageWatcher } from "./services/messageWatcher";
-import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
-const io = initializeSocket(httpServer);
+export const io = initializeSocket(httpServer);
+
 
 initializeRedis()
   .then(() => {
@@ -39,6 +39,12 @@ app.use((req, res, next) => {
   logger.info(`${req.method} ${req.path}`);
   next();
 });
+
+app.use((req, res, next) => {
+  (req).io = io;
+  next();
+});
+
 app.use(json());
 app.use(urlencoded({ extended: true }));
 

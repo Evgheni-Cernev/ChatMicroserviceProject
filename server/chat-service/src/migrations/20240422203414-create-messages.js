@@ -23,8 +23,8 @@ module.exports = {
         allowNull: false
       },
       content: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING(2048),
+        allowNull: true
       },
       filePath: {
         type: Sequelize.STRING,

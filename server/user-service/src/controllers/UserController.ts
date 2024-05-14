@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
+import { UserInstance } from "../models";
 
 const userService = new UserService();
 
 class UserController {
   async register(req: Request, res: Response) {
     try {
-      const { username, password, email } = req.body;
-      const user = await userService.createUser(username, password, email);
+      const user = await userService.createUser(req.body as UserInstance);
       res.status(201).json(user);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -43,18 +43,38 @@ class UserController {
     }
   }
 
+  async getUserAll(req: Request, res: Response) {
+    try {
+      const user = await userService.getUserAll();
+      res.json(user);
+    } catch (error: any) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
   async updateProfile(req: Request, res: Response) {
     try {
       const userId = parseInt(req.params.userId);
-      const { username, password } = req.body;
       const updatedUser = await userService.updateUser(
         userId,
-        username,
-        password
+        req.body as UserInstance,
       );
       res.json(updatedUser);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+  async updateAvatar(req: Request, res: Response) {
+    try {
+      const userId = parseInt(req.params.userId);
+      const file = req.file;
+      const updatedUser = await userService.updateAvatar(userId, file);
+
+      res.json({ message: "Avatar updated successfully", user: updatedUser });
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

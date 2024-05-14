@@ -19,5 +19,6 @@ router.post('/login', (req, res) => authController.login(req, res));
 router.get('/logout', (req, res) => authController.logout(req, res));
 
 router.post('/verify-token', (req, res) => authController.verifyToken(req, res));
+router.post('/verify-token/get-user', (req, res) => authController.verifyTokenGetUser(req, res));
 
 export default router;

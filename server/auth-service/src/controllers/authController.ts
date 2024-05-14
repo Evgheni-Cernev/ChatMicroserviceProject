@@ -50,7 +50,7 @@ class AuthController {
       if (isValid && user) {
         const token = this.tokenService.generateToken(user.id);
         await this.redisService.saveSession(token, user.id);
-        res.status(200).send({ token });
+        res.status(200).send({ token, user });
       } else {
         res.status(401).send("Invalid credentials");
       }
@@ -91,6 +91,20 @@ class AuthController {
       const userId = await this.redisService.getSession(token);
       if (userId && this.tokenService.verifyToken(token)) {
         res.status(200).send(true);
+      } else {
+        res.status(401).send(false);
+      }
+    } catch (error) {
+      res.status(500).send("Server error");
+    }
+  }
+
+  public async verifyTokenGetUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { token } = req.body;
+      const userId = await this.redisService.getSession(token);
+      if (userId && this.tokenService.verifyToken(token)) {
+        res.status(200).send(userId);
       } else {
         res.status(401).send(false);
       }

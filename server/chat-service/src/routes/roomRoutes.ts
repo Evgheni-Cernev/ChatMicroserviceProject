@@ -11,9 +11,12 @@ export const roomRoutes = (io: SocketIOServer) => {
   });
 
   router.post("/", roomController.createRoom);
+  router.get("/:roomId/public-keys", roomController.getChatRecipientsPublicKeys);
+
   router.post("/:roomId/:adminUserId", roomController.setRoomMessageExpirationTime);
 
   router.get("/:userId", roomController.getRooms);
+
 
   return router;
 };

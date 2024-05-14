@@ -19,7 +19,7 @@ app.use(cors());
 app.use(
   cors({
     origin: "*",
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST","PUT", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );

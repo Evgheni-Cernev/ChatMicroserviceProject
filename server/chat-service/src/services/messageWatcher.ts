@@ -6,7 +6,7 @@ export async function setupMessageWatcher() {
     const room = await Room.findByPk(message.roomId);
     if (room && room.messageExpirationTime != null) {
       const delay = room.messageExpirationTime * 1000;
-      messageDeletionQueue.add({ messageId: message.id }, { delay });
+      (await messageDeletionQueue.add({ messageId: message.id }, { delay }));
       console.warn(
         `Scheduled deletion for message ${message.id} in ${delay} ms.`
       );
