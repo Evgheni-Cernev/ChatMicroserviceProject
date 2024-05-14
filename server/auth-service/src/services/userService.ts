@@ -33,8 +33,9 @@ export class UserService {
       if (!user) {
         return false;
       }
-
       const isValid = await bcrypt.compare(password, user.password);
+      console.warn(isValid)
+
       return isValid;
     } catch (error) {
       console.error("Error validating user:", error);

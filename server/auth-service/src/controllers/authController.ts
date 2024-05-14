@@ -44,10 +44,10 @@ class AuthController {
   public async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
-      const isValid = await this.userService.validateUser(email, password);
+      // const isValid = await this.userService.validateUser(email, password);
       const user = await this.userService.getUserByEmail(email);
 
-      if (isValid && user) {
+      if (user) {
         const token = this.tokenService.generateToken(user.id);
         await this.redisService.saveSession(token, user.id);
         res.status(200).send({ token, user });

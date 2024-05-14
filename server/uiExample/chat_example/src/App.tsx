@@ -1,13 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
 import io, { Socket } from "socket.io-client";
 import ImageComponent from "./ImageComponent";
+import FileComponent from "./FileComponent";
+import ProfileComponent from "./ProfileComponent";
 import "./App.css";
 import { encryptMessage, decryptMessage } from "./utils";
 
-interface User {
+export interface User {
   id: number;
   username: string;
   email: string;
+  password: string;
+  avatar: string | null;
+  age: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  country: string | null;
+  region: string | null;
+  language: string | null;
+  onlineStatus: boolean;
+  biography: string | null;
+  socialLinks: string[] | null;
+  role: string;
+  registrationDate: Date;
+  lastLoginDate: Date | null;
+  notifications: boolean;
 }
 
 interface Message {
@@ -34,6 +51,7 @@ const App: React.FC = () => {
   const [recipients, setRecipients] = useState<
     { userId: number; publicKey: string }[]
   >([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const messagesDisplayRef = useRef<HTMLDivElement>(null);
   const socketInstance = useRef<Socket | null>(null);
   const [expirationTime, setExpirationTimeValue] = useState<number | null>(
@@ -65,10 +83,7 @@ const App: React.FC = () => {
       socketInstance.current.on("sendMessage", async ({ message }) => {
         try {
           setMessages((prevMessages) => {
-            return [
-              ...prevMessages,
-              message,
-            ]
+            return [...prevMessages, message];
           });
         } catch (error) {
           console.error("Error decrypting message:", error);
@@ -98,6 +113,8 @@ const App: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
+      const user = JSON.parse(localStorage.getItem("user")!);
+      setCurrentUser(user);
       fetchAllUsers();
       fetchAllChats();
     } else {
@@ -116,6 +133,7 @@ const App: React.FC = () => {
         setIsAuthenticated(false);
         setUsers([]);
         setChats([]);
+        setCurrentUser(null);
         if (socketInstance.current) {
           socketInstance.current.disconnect();
           socketInstance.current = null;
@@ -137,12 +155,13 @@ const App: React.FC = () => {
 
   const fetchAllUsers = () => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const user = localStorage.getItem("user");
+    if (!token && user) {
       console.error("No token found, please log in first.");
       return;
     }
 
-    fetch("http://localhost:3003/user/all", {
+    fetch(`http://localhost:3003/user/all/${JSON.parse(user!).id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -202,8 +221,6 @@ const App: React.FC = () => {
 
     if (!chatId) return;
 
-    console.warn(encryptMessage(messageInput.value, user.publicKey));
-
     const encryptedContent = recipients.reduce((acc, recipient) => {
       return {
         ...acc,
@@ -222,7 +239,6 @@ const App: React.FC = () => {
     formData.append("roomId", chatId.toString());
     formData.append("senderId", user.id.toString());
     formData.append("content", JSON.stringify(encryptedContent));
-    // formData.append("encryptedKeys", JSON.stringify(encryptedKeys));
 
     fetch("http://localhost:3003/messages", {
       method: "POST",
@@ -263,6 +279,30 @@ const App: React.FC = () => {
         setMessages(messages);
       })
       .catch((error) => console.error("Error fetching messages:", error));
+  };
+
+  const uploadAvatar = (userId: number, avatarFile: File) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found, please log in first.");
+      return;
+    }
+
+    const avatarFormData = new FormData();
+    avatarFormData.append("file", avatarFile);
+
+    fetch(`http://localhost:3003/user/avatar/${userId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: avatarFormData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Avatar updated:", data);
+      })
+      .catch((error) => console.error("Error uploading avatar:", error));
   };
 
   const toggleUserSelection = (userId: number) => {
@@ -318,6 +358,46 @@ const App: React.FC = () => {
           </li>
         ))}
       </ul>
+      {currentRoom?.id && (
+        <>
+          {currentRoom.id &&
+            currentRoom.adminUserId ===
+              JSON.parse(localStorage.getItem("user")!).id &&
+            isAuthenticated && (
+              <div>
+                <label htmlFor="expirationTime">
+                  Set message expiration time (minutes):
+                </label>
+                <input
+                  type="number"
+                  id="expirationTime"
+                  value={expirationTime || ""}
+                  onChange={(e) =>
+                    setExpirationTimeValue(parseInt(e.target.value))
+                  }
+                />
+                <button
+                  onClick={() => {
+                    const user = JSON.parse(localStorage.getItem("user")!);
+                    setExpirationTime(currentRoom.id, user.id, expirationTime!);
+                  }}
+                >
+                  Set Expiration Time
+                </button>
+              </div>
+            )}
+          <div id="messagesDisplay">{displayMessages()}</div>
+          <div id="messageInputArea">
+            <input
+              type="text"
+              id="messageInput"
+              placeholder="Write a message..."
+            />
+            <input type="file" id="fileInput" />
+            <button onClick={sendMessage}>Send</button>
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -331,6 +411,9 @@ const App: React.FC = () => {
             message.content[user.id],
             user.privateKey
           );
+
+          const isImage = message.filePath?.match(/\.(jpeg|jpg|gif|png|webp)$/);
+
           return (
             <li
               key={message.id}
@@ -340,9 +423,12 @@ const App: React.FC = () => {
               <div>
                 <strong>{message.sender.username}:</strong> {decryptedMessage}
               </div>
-              {message.filePath && (
-                <ImageComponent fileName={message.filePath} />
-              )}
+              {message.filePath &&
+                (isImage ? (
+                  <ImageComponent fileName={message.filePath} />
+                ) : (
+                  <FileComponent fileName={message.filePath} />
+                ))}
             </li>
           );
         })}
@@ -433,6 +519,12 @@ const App: React.FC = () => {
             onClick={() => openTab("AllChats")}
           >
             All Chats
+          </button>
+          <button
+            className="tablinks auth-tab"
+            onClick={() => openTab("MyProfile")}
+          >
+            My Profile
           </button>
         </>
       )}
@@ -532,72 +624,11 @@ const App: React.FC = () => {
 
       {selectedTab === "AllUsers" && displayUsers()}
       {selectedTab === "AllChats" && displayChats()}
-      {currentRoom?.id && (
-        <>
-          {currentRoom.id &&
-            currentRoom.adminUserId ===
-              JSON.parse(localStorage.getItem("user")!).id &&
-            isAuthenticated && (
-              <div>
-                <label htmlFor="expirationTime">
-                  Set message expiration time (minutes):
-                </label>
-                <input
-                  type="number"
-                  id="expirationTime"
-                  value={expirationTime || ""}
-                  onChange={(e) =>
-                    setExpirationTimeValue(parseInt(e.target.value))
-                  }
-                />
-                <button
-                  onClick={() => {
-                    const user = JSON.parse(localStorage.getItem("user")!);
-                    setExpirationTime(currentRoom.id, user.id, expirationTime!);
-                  }}
-                >
-                  Set Expiration Time
-                </button>
-              </div>
-            )}
-          <div id="messagesDisplay">{displayMessages()}</div>
-          <div id="messageInputArea">
-            <input
-              type="text"
-              id="messageInput"
-              placeholder="Write a message..."
-            />
-            <input type="file" id="fileInput" />
-            <button onClick={sendMessage}>Send</button>
-          </div>
-        </>
+      {selectedTab === "MyProfile" && currentUser && (
+        <ProfileComponent user={currentUser} onUpdate={setCurrentUser} />
       )}
     </div>
   );
 };
 
 export default App;
-
-const uploadAvatar = (userId: number, avatarFile: File) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("No token found, please log in first.");
-    return;
-  }
-
-  const avatarFormData = new FormData();
-  avatarFormData.append("file", avatarFile);
-
-  fetch(`http://localhost:3003/user/avatar/${userId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: avatarFormData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Avatar updated:", data);
-    })
-    .catch((error) => console.error("Error uploading avatar:", error));
-};

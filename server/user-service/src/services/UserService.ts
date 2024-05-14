@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { User, UserInstance } from "../models";
 import { generateToken } from "../utils/tokenUtils";
+import { Op } from 'sequelize';
 import forge from "node-forge";
 
 const generateKeyPair = () => {
@@ -56,8 +57,14 @@ export class UserService {
     return user;
   }
 
-  async getUserAll() {
-    const user = await User.findAll({});
+  async getUserAll(userId: string) {
+    const user = await User.findAll({
+      where: {
+        id: {
+          [Op.not]: userId
+        }
+      }
+    });
     if (!user) {
       throw new Error("User not found");
     }

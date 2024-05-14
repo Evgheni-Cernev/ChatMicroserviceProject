@@ -25,7 +25,7 @@ export const updateUserById = async (req: Request, res: Response) => {
 export const getUserAll = async (req: Request, res: Response) => {
   try {
 
-    const response = await axios.get(`${process.env.USER_SERVICE_BASE_URL}/all`, req.body);
+    const response = await axios.get(`${process.env.USER_SERVICE_BASE_URL}/all/${req.params.userId}`, req.body);
     
     res.json(response.data);
   } catch (error: any) {
@@ -55,6 +55,23 @@ export const updateUserAvatarById = async (req: Request, res: Response) => {
     res.json(response.data);
   } catch (error: any) {
     console.error('Error uploading avatar:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getUserAvatar = async (req: Request, res: Response) => {
+  try {
+    const { fileName } = req.params;
+    const url = `${process.env.USER_SERVICE_BASE_URL}/profile/avatar/${fileName}`;
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+    });
+
+    const mimeType = response.headers["content-type"]; // Ensure correct MIME type is forwarded
+    res.setHeader("Content-Type", mimeType || "application/octet-stream");
+    res.status(200).send(Buffer.from(response.data));
+  } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 };

@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { UserInstance } from "../models";
+import mime from "mime";
+import * as fs from "fs";
+import * as path from "path";
 
 const userService = new UserService();
 
@@ -45,7 +48,7 @@ class UserController {
 
   async getUserAll(req: Request, res: Response) {
     try {
-      const user = await userService.getUserAll();
+      const user = await userService.getUserAll(req.params.userId);
       res.json(user);
     } catch (error: any) {
       res.status(404).json({ message: error.message });
@@ -69,6 +72,7 @@ class UserController {
     try {
       const userId = parseInt(req.params.userId);
       const file = req.file;
+      console.warn({userId, file})
       const updatedUser = await userService.updateAvatar(userId, file);
 
       res.json({ message: "Avatar updated successfully", user: updatedUser });
@@ -77,6 +81,23 @@ class UserController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  async getAvatar(req: Request, res: Response) {
+    const { fileName } = req.params;
+    const directoryPath = path.join(__dirname, "../../userAvatar");
+    const filePath = path.join(directoryPath, fileName);
+  
+    try {
+      const fileContent = await fs.promises.readFile(filePath);
+      const mimeType = mime.lookup(filePath);
+  
+      res.setHeader("Content-Type", mimeType || "application/octet-stream");
+      res.status(200).send(fileContent);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
 }
 
 export default new UserController();

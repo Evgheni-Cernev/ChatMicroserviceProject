@@ -14,8 +14,14 @@ router.use(authenticateToken);
 router.get("/logout", logout);
 
 //user
-router.get("/user/all", UserController.getUserAll);
+router.get(
+  "/user/avatar/:fileName",
+  UserController.getUserAvatar
+);
+router.get("/user/all/:userId", UserController.getUserAll);
 router.get("/user/:userId", UserController.getUserById);
+
+
 
 router.put(
   "/user/avatar/:userId",
