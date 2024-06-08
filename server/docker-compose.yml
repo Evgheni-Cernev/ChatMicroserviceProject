@@ -3,51 +3,51 @@ version: '3.8'
 services:
   gateway-service:
     build:
-      context: ./gateway-service  
+      context: ./gateway-service
       dockerfile: Dockerfile
     command: npm run dev
     environment:
       PORT: 3003
     ports:
-      - "3003:3003"
+      - '3003:3003'
     depends_on:
       - user-service
       - chat-service
       - auth-service
     volumes:
-      - ./gateway-service:/usr/src/app  
-      - /usr/src/app/node_modules 
+      - ./gateway-service:/usr/src/app
+      - /usr/src/app/node_modules
   user-service:
     build:
-      context: ./user-service  
+      context: ./user-service
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
       DATABASE_URL: postgres://postgres:password@user-db:5432/userdb
     ports:
-      - "3006:3006"
+      - '3006:3006'
     depends_on:
       - user-db
     volumes:
-      - ./user-service:/usr/src/app  
-      - /usr/src/app/node_modules 
+      - ./user-service:/usr/src/app
+      - /usr/src/app/node_modules
     command: npm run dev
 
   chat-service:
     build:
-      context: ./chat-service  
+      context: ./chat-service
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
       DATABASE_URL: postgres://postgres:password@chat-db:5432/chatdb
     ports:
-      - "3008:3008"
+      - '3008:3008'
     depends_on:
       - chat-db
       - message-delete-db
     volumes:
-      - ./chat-service:/usr/src/app  
-      - /usr/src/app/node_modules  
+      - ./chat-service:/usr/src/app
+      - /usr/src/app/node_modules
     command: npm run dev
 
   auth-service:
@@ -55,7 +55,7 @@ services:
       context: ./auth-service
       dockerfile: Dockerfile
     ports:
-      - "3009:3009"
+      - '3009:3009'
     depends_on:
       - auth-db
     volumes:
@@ -70,7 +70,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - user_postgres_data:/var/lib/postgresql/data
 
@@ -81,7 +81,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - chat_postgres_data:/var/lib/postgresql/data
 
@@ -89,12 +89,12 @@ services:
     image: redis
     command: redis-server --requirepass yourpassword
     ports:
-      - "6379:6379"
+      - '6379:6379'
   message-delete-db:
     image: redis
     command: redis-server --requirepass yourpassword
     ports:
-      - "6380:6379"
+      - '6380:6379'
 
 volumes:
   user_postgres_data:

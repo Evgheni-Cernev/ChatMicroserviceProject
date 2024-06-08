@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import axios from "axios";
+import { Request, Response } from 'express';
+import axios from 'axios';
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -33,13 +33,13 @@ export const logout = async (req: Request, res: Response) => {
       `${process.env.AUTH_SERVICE_BASE_URL}/logout`,
       {
         headers: {
-          authorization: req.headers["authorization"],
+          authorization: req.headers['authorization'],
         },
       }
     );
     res.sendStatus(Number(response.status));
   } catch (error: any) {
-    console.error("Logout failed:", error);
+    console.error('Logout failed:', error);
     res.status(500).json({ message: error.message });
   }
 };

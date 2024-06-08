@@ -8,39 +8,39 @@ module.exports = {
         allowNull: false,
         references: {
           model: 'Rooms',
-          key: 'id'
+          key: 'id',
         },
-        primaryKey: true
+        primaryKey: true,
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        primaryKey: true
+        primaryKey: true,
       },
       role: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'participant'
+        defaultValue: 'participant',
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
     });
 
     // Создаём индекс для улучшения производительности поиска
     await queryInterface.addIndex('RoomParticipants', ['roomId', 'userId'], {
       unique: true,
-      name: 'room_user_unique_index'
+      name: 'room_user_unique_index',
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('RoomParticipants');
-  }
+  },
 };
