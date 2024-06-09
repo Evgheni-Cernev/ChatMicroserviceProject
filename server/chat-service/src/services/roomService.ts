@@ -4,6 +4,8 @@ import sequelize, {
   RoomParticipants,
   RoomAttributes,
 } from "../models";
+import { getUserById } from "./messageService";
+
 import { Transaction } from "sequelize";
 
 import axios from "axios";
@@ -85,13 +87,34 @@ export const getRoomsByUserId = async (userId: number) => {
     });
 
     const roomIds = roomParticipants.map((participant) => participant.roomId);
+
     const rooms = await Room.findAll({
       where: {
         id: roomIds,
       },
     });
 
-    return rooms;
+    const roomsWithAdmin = await Promise.all(
+      rooms.map(async (room) => {
+        const { adminUserId, ...other } = room.toJSON();
+        const user = adminUserId ? await getUserById(adminUserId) : null;
+
+        if (!user) {
+          return;
+        }
+
+        return {
+          ...other,
+          adminUser: {
+            username: user.username,
+            email: user.email,
+            id: user.id,
+          },
+        };
+      })
+    );
+
+    return roomsWithAdmin;
   } catch (error) {
     console.error("Error while fetching rooms by user ID:", error);
     throw new Error("Failed to fetch rooms by user ID.");
