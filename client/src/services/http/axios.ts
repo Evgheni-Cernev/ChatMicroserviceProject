@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
-  withCredentials: true,
+  //   withCredentials: true,
   timeout: 60000,
   responseType: 'json',
   responseEncoding: 'utf8',

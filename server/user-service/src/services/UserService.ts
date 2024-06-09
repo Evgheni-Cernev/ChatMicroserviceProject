@@ -1,8 +1,8 @@
-import bcrypt from "bcrypt";
-import { User, UserInstance } from "../models";
-import { generateToken } from "../utils/tokenUtils";
+import bcrypt from 'bcrypt';
+import { User, UserInstance } from '../models';
+import { generateToken } from '../utils/tokenUtils';
 import { Op } from 'sequelize';
-import forge from "node-forge";
+import forge from 'node-forge';
 
 const generateKeyPair = () => {
   const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair(2048);
@@ -29,12 +29,12 @@ export class UserService {
   async authenticateUser(username: string, password: string) {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      throw new Error("Invalid credentials");
+      throw new Error('Invalid credentials');
     }
 
     const token = generateToken(user.password);
@@ -44,7 +44,7 @@ export class UserService {
   async getUserById(userId: number) {
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     return user;
   }
@@ -52,7 +52,7 @@ export class UserService {
   async getUserByEmail(email: string) {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     return user;
   }
@@ -61,12 +61,12 @@ export class UserService {
     const user = await User.findAll({
       where: {
         id: {
-          [Op.not]: userId
-        }
-      }
+          [Op.not]: userId,
+        },
+      },
     });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     return user;
   }
@@ -74,7 +74,7 @@ export class UserService {
   async updateUser(userId: number, data: UserInstance) {
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     if (data.username) {
@@ -122,10 +122,10 @@ export class UserService {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     if (!file) {
-      throw new Error("Avatar file is required");
+      throw new Error('Avatar file is required');
     }
 
     user.avatar = file.filename;

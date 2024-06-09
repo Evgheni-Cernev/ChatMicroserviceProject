@@ -2,6 +2,7 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom';
 import { App } from '../components/App/App';
 import { Login } from '../components/Login/login';
 import { Signup } from '../components/Signup/signup';
+import { ChatsMenu } from '../components/ChatsMenu/chatsMenu';
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ const routes: RouteObject[] = [
   {
     path: '/login',
     Component: Login,
+  },
+  {
+    path: '/chats',
+    Component: ChatsMenu,
   },
 ];
 

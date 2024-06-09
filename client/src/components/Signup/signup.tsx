@@ -1,10 +1,12 @@
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Image } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/api/auth';
 
 export const Signup = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = (values: any) => {
     console.log('Received values from form: ', values);
@@ -16,6 +18,9 @@ export const Signup = () => {
     signup({ email, password, name: username })
       .then((res) => {
         console.log('Signup res', res);
+        const { token, user = {} } = res;
+        const { id, email, username, privateKey, publicKey } = user;
+        navigate('/chats');
       })
       .catch((err) => {
         console.error(err);
