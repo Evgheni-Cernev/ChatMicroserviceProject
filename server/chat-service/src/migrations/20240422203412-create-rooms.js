@@ -2,14 +2,6 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // Create the database if it does not exist
-    await queryInterface.sequelize.query(
-      'CREATE DATABASE IF NOT EXISTS userdb;'
-    );
-
-    // Switch to the new database
-    await queryInterface.sequelize.query('USE userdb;');
-
     await queryInterface.createTable('Rooms', {
       id: {
         allowNull: false,

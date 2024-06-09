@@ -4,20 +4,23 @@
     "password": "password",
     "database": "userdb",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "port": 5434
   },
   "test": {
     "username": "postgres",
     "password": "password",
     "database": "userdb",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "port": 5434
   },
   "production": {
     "username": "postgres",
     "password": "password",
     "database": "userdb",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "port": 5434
   }
 }

@@ -2,86 +2,92 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    // // Create the database if it does not exist
+    // await queryInterface.sequelize.query('CREATE DATABASE userdb;');
+
+    // // Switch to the new database
+    // await queryInterface.sequelize.query('USE userdb;');
+
     await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       username: {
         type: Sequelize.STRING(128),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       email: {
         type: Sequelize.STRING(128),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password: {
         type: Sequelize.STRING(255),
-        allowNull: false
+        allowNull: false,
       },
       avatar: {
         type: Sequelize.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       age: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       firstName: {
         type: Sequelize.STRING(50),
-        allowNull: true
+        allowNull: true,
       },
       lastName: {
         type: Sequelize.STRING(50),
-        allowNull: true
+        allowNull: true,
       },
       country: {
         type: Sequelize.STRING(100),
-        allowNull: true
+        allowNull: true,
       },
       region: {
         type: Sequelize.STRING(100),
-        allowNull: true
+        allowNull: true,
       },
       language: {
         type: Sequelize.STRING(50),
-        allowNull: true
+        allowNull: true,
       },
       onlineStatus: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       biography: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       socialLinks: {
         type: Sequelize.ARRAY(Sequelize.STRING(255)),
-        allowNull: true
+        allowNull: true,
       },
       role: {
         type: Sequelize.STRING(50),
         allowNull: false,
-        defaultValue: 'user'
+        defaultValue: 'user',
       },
       registrationDate: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       lastLoginDate: {
         allowNull: true,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       notifications: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: true,
       },
       publicKey: {
         type: Sequelize.STRING(2048),
@@ -95,15 +101,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Users');
-  }
+  },
 };
