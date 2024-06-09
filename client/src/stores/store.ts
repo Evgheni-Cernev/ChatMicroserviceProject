@@ -5,6 +5,6 @@ import { AccountSlice, createAccountSlice } from './slices/account.slice';
 export type StoreState = AuthSlice & AccountSlice;
 
 export const useStore = create<StoreState>()((set) => ({
-    ...createAuthSlice(set),
-    ...createAccountSlice(set),
+  ...createAuthSlice(set),
+  ...createAccountSlice(set),
 }));

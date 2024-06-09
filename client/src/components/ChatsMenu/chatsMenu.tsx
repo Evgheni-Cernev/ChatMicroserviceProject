@@ -1,35 +1,54 @@
-import React from 'react';
-import { Table } from 'antd';
+import { useEffect } from 'react';
+import { Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
+import { getUserChats } from '../../services/api/chats';
 
 interface DataType {
   key: string;
   name: string;
-  participants: string[];
+  members: any[];
   ttl: number;
   admin: string;
 }
 
 const columns: TableProps<DataType>['columns'] = [
   {
-    title: 'Name',
+    title: 'Chats',
     dataIndex: 'name',
     align: 'center',
     key: 'name',
     render: (text) => <a>{text}</a>,
   },
   {
-    title: 'Participants',
-    dataIndex: 'participants',
+    title: 'Members',
+    dataIndex: 'members',
     align: 'center',
-    key: 'participants',
-    render: (text: string[]) => {
-      console.log('text', text);
-      return text?.join(', ');
-    },
+    key: 'members',
+    // render: (text: string[]) => {
+    //   console.log('text', text);
+    //   return text?.join(', ');
+    // },
+
+    render: (_, { members }) => (
+      <>
+        {members.map((participant: string) => {
+          // let color = tag.length > 5 ? 'geekblue' : 'green';
+          let color = participant === 'Eugen' ? 'volcano' : 'green';
+
+          if (participant === 'loser') {
+            color = 'volcano';
+          }
+          return (
+            <Tag color={color} key={participant}>
+              {participant.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </>
+    ),
   },
   {
-    title: 'Message Time To Live (seconds)',
+    title: 'Message expiry (seconds)',
     dataIndex: 'ttl',
     align: 'center',
     key: 'ttl',
@@ -48,26 +67,38 @@ const data: DataType[] = [
   {
     key: '1',
     name: 'Chat 1',
-    participants: ['Nicolae', 'Eugen'],
+    members: ['Nicolae', 'Eugen'],
     ttl: 60,
-    admin: 'Nicolae',
+    admin: 'Eugen',
   },
   {
     key: '2',
     name: 'Chat 2',
-    participants: ['Nicolae', 'Eugen'],
+    members: ['Nicolae', 'Eugen'],
     ttl: 60,
-    admin: 'Nicolae',
+    admin: 'Eugen',
   },
   {
     key: '3',
     name: 'Chat 3',
-    participants: ['Nicolae', 'Eugen'],
+    members: ['Nicolae', 'Eugen'],
     ttl: 60,
-    admin: 'Nicolae',
+    admin: 'Eugen',
   },
 ];
 export const ChatsMenu = ({ onSelectChat }) => {
+  useEffect(() => {
+    console.log('ChatsMenu useEffect');
+
+    getUserChats({ userId: 8 })
+      .then((res) => {
+        console.log('getUserChats res', res);
+      })
+      .catch((err) => {
+        console.error('getUserChats', err);
+      });
+  }, []);
+
   return (
     <>
       <Table columns={columns} dataSource={data} />

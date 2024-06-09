@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { axiosInstance } from '../../services/http/axios'; // Ensure this import is valid
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Button, Form, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Image } from 'antd';
 import { login } from '../../services/api/auth'; // Ensure this import is valid
 
 interface FormValues {
@@ -10,26 +10,35 @@ interface FormValues {
 }
 
 export const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const onFinish = (values: FormValues) => {
-    console.log('Received values of form: ', values);
+    console.log('Received values from LOGIN form: ', values);
 
-    login(values)
+    const { email, password } = values;
+
+    console.log({ email, password });
+
+    login({ email, password })
       .then((res) => {
-        const { token, user } = res;
-        console.log('login res', res);
-        // Handle successful login
+        console.log('Signup res', res);
+        const { token, user = {} } = res;
+        const { id, email, username, privateKey, publicKey } = user;
+        navigate('/chats');
       })
       .catch((err) => {
-        console.log('Login failed', err);
-        // Handle login failure
+        console.error(err);
       });
   };
 
   return (
     <Form name='login' onFinish={onFinish} layout='vertical'>
+      <Image
+        src='src/assets/images/privy-text-logo.png'
+        width={70}
+        preview={false}
+        style={{ marginBottom: '20px' }}
+      />
       <Form.Item
         name='email'
         label='Email'
@@ -38,12 +47,7 @@ export const Login = () => {
           { type: 'email', message: 'Please enter a valid email address!' },
         ]}
       >
-        <Input
-          prefix={<MailOutlined />}
-          placeholder='Email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <Input prefix={<MailOutlined />} placeholder='Email' />
       </Form.Item>
 
       <Form.Item
@@ -51,15 +55,13 @@ export const Login = () => {
         label='Password'
         rules={[
           { required: true, message: 'Please input your password!' },
-          { min: 6, message: 'Password must be at least 6 characters long!' },
+          {
+            min: 10,
+            message: 'Password must be at least 10 characters long!',
+          },
         ]}
       >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder='Password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <Input.Password prefix={<LockOutlined />} placeholder='Password' />
       </Form.Item>
 
       <Form.Item>

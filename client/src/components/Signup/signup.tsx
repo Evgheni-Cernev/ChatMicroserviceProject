@@ -1,12 +1,26 @@
-import { Form, Input, Button } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Image } from 'antd';
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Image, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/api/auth';
+import { useStore } from '../../stores/store';
+import { useEffect } from 'react';
 
 export const Signup = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const store = useStore();
+  const { setToken, token } = useStore((state) => state);
+
+  useEffect(() => {
+    console.log('store', store);
+
+    if (!store.token) {
+      console.log({ setToken, token });
+
+      setToken('tokenset');
+    }
+  }, [token]);
 
   const onFinish = (values: any) => {
     console.log('Received values from form: ', values);
@@ -80,7 +94,7 @@ export const Signup = () => {
             message: 'Please input your password!',
           },
           {
-            len: 10,
+            min: 10,
             message: 'Password must be at least 10 characters long!',
           },
         ]}

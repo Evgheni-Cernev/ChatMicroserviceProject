@@ -1,0 +1,12 @@
+# create room
+{
+    "room": {
+        "id": 1,
+        "isDirectMessage": false,
+        "adminUserId": 8,
+        "chatName": "Nico-Eug",
+        "updatedAt": "2024-06-09T21:23:01.071Z",
+        "createdAt": "2024-06-09T21:23:01.071Z",
+        "messageExpirationTime": null
+    }
+}
