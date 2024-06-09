@@ -268,3 +268,8 @@
 {"level":"info","message":"GET /api/rooms/1","service":"chat-service","timestamp":"2024-06-08 22:38:58"}
 {"level":"info","message":"GET /api/rooms/1","service":"chat-service","timestamp":"2024-06-08 23:33:49"}
 {"level":"info","message":"GET /api/rooms/1","service":"chat-service","timestamp":"2024-06-08 23:33:49"}
+{"level":"info","message":"POST /api/rooms","service":"chat-service","timestamp":"2024-06-09 16:18:11"}
+{"level":"info","message":"POST /api/messages","service":"chat-service","timestamp":"2024-06-09 16:18:18"}
+{"level":"info","message":"GET /api/rooms/14","service":"chat-service","timestamp":"2024-06-09 16:18:41"}
+{"level":"info","message":"POST /api/rooms","service":"chat-service","timestamp":"2024-06-09 17:03:27"}
+{"level":"info","message":"POST /api/rooms","service":"chat-service","timestamp":"2024-06-09 17:06:10"}

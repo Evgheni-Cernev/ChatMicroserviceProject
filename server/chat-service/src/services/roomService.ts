@@ -11,7 +11,8 @@ import axios from "axios";
 export const createRoom = async (
   userIds: number[],
   adminUserId: number,
-  isDirectMessage: boolean
+  isDirectMessage: boolean,
+  chatName: string
 ): Promise<RoomAttributes> => {
   const transaction: Transaction = await sequelize.transaction();
 
@@ -48,6 +49,7 @@ export const createRoom = async (
       {
         isDirectMessage,
         adminUserId,
+        chatName,
       },
       { transaction }
     );

@@ -7,13 +7,15 @@ export const authenticateToken = async (
   next: NextFunction
 ) => {
   const userService = new AuthService(process.env.AUTH_SERVICE_BASE_URL ?? "");
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  
+  const token = req.cookies?.auth_token;
+  console.log(token)
 
   if (token == null) return res.sendStatus(401); 
 
   try {
     const isValid = await userService.validateUser(token);
+    console.log(isValid)
     if (isValid) {
       next();
     } else {

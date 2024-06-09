@@ -7,7 +7,7 @@ export const createRoom = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { userIds, adminUserId, isDirectMessage } = req.body;
+    const { userIds, adminUserId, isDirectMessage, chatName } = req.body;
 
     if (!Array.isArray(userIds) || userIds.length < 2) {
       res.status(400).json({
@@ -28,10 +28,17 @@ export const createRoom = async (
       return;
     }
 
+    if(!chatName) {
+      res.status(400).json({
+        message: "chatName is required",
+      });
+    }
+
     const room = await RoomService.createRoom(
       userIds,
       adminUserId,
-      isDirectMessage
+      isDirectMessage,
+      chatName
     );
 
     if (req.io) {

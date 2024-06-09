@@ -17,6 +17,11 @@ const app = express();
 const httpServer = createServer(app);
 export const io = initializeSocket(httpServer);
 
+const ALLOWED_ORIGIN = [
+  process.env.ALLOWED_USER_SERVICE_BASE_URL ?? "",
+  process.env.ALLOWED_GATEWAY_SERVICE_BASE_URL ?? "",
+  process.env.ALLOWED_AUTH_SERVICE_BASE_URL ?? "",
+];
 
 initializeRedis()
   .then(() => {
@@ -29,7 +34,7 @@ initializeRedis()
 app.use(cors());
 app.use(
   cors({
-    origin: "*",
+    origin: ALLOWED_ORIGIN,
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

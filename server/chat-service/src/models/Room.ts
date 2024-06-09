@@ -4,6 +4,7 @@ import { RoomParticipantsAttributes } from "./";
 export interface RoomAttributes {
   id?: number;
   isDirectMessage: boolean;
+  chatName: string;
   adminUserId?: number;
   messageExpirationTime?: number;
   participants?: RoomParticipantsAttributes[];
@@ -21,6 +22,10 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+      },
+      chatName: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       isDirectMessage: {
         type: DataTypes.BOOLEAN,

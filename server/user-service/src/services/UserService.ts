@@ -42,7 +42,9 @@ export class UserService {
   }
 
   async getUserById(userId: number) {
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
     if (!user) {
       throw new Error("User not found");
     }
@@ -50,7 +52,7 @@ export class UserService {
   }
 
   async getUserByEmail(email: string) {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email }, attributes: { exclude: ['password'] }  });
     if (!user) {
       throw new Error("User not found");
     }
@@ -63,7 +65,8 @@ export class UserService {
         id: {
           [Op.not]: userId
         }
-      }
+      },
+      attributes: { exclude: ['password'] }
     });
     if (!user) {
       throw new Error("User not found");
@@ -119,7 +122,9 @@ export class UserService {
   }
 
   async updateAvatar(userId: number, file?: Express.Multer.File) {
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
 
     if (!user) {
       throw new Error("User not found");

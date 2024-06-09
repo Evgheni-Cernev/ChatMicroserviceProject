@@ -4,6 +4,7 @@ import { publicRoutes } from "./routes/public";
 import { privateRoutes } from "./routes/private";
 import { errorHandler } from "./middlewares/errorHandler";
 import { logger } from "./middlewares/loggingMiddleware";
+import cookieParser from 'cookie-parser';
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -15,14 +16,16 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(logger);
 
-app.use(cors());
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST","PUT", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
+
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
+app.use(cors({
+  origin: ALLOWED_ORIGIN,
+  methods: ["GET", "POST", "PUT", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-XSRF-TOKEN"],
+  credentials: true,
+}));
 
 app.use(express.json());
 

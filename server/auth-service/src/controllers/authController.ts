@@ -43,8 +43,7 @@ class AuthController {
 
   public async login(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password } = req.body;
-      // const isValid = await this.userService.validateUser(email, password);
+      const { email } = req.body; 
       const user = await this.userService.getUserByEmail(email);
 
       if (user) {
@@ -61,8 +60,7 @@ class AuthController {
 
   public async logout(req: Request, res: Response): Promise<void> {
     try {
-      const authHeader = req.headers["authorization"];
-      const token = authHeader && authHeader.split(" ")[1];
+      const { token } = req.body;
 
       if (!token) {
         res.status(401).send("Token invalid");
