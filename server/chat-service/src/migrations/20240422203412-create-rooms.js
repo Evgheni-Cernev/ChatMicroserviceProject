@@ -9,6 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      chatName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'Chat Name',
+      },
       isDirectMessage: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

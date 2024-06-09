@@ -6,22 +6,16 @@ import multer from "multer";
 import { logout } from "../controllers/authController";
 
 const router = Router();
-const storage = multer.memoryStorage(); // Храните файлы в памяти для последующего перенаправления
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.use(authenticateToken);
-//auth
+
 router.get("/logout", logout);
 
-//user
-router.get(
-  "/user/avatar/:fileName",
-  UserController.getUserAvatar
-);
+router.get("/user/avatar/:fileName", UserController.getUserAvatar);
 router.get("/user/all/:userId", UserController.getUserAll);
 router.get("/user/:userId", UserController.getUserById);
-
-
 
 router.put(
   "/user/avatar/:userId",
@@ -30,10 +24,12 @@ router.put(
 );
 router.put("/user/:userId", UserController.updateUserById);
 
-//chat
 router.post("/chat/create", ChatController.createNewChat);
 
-router.get("/chat/:roomId/public-keys", ChatController.getChatRecipientsPublicKeys);
+router.get(
+  "/chat/:roomId/public-keys",
+  ChatController.getChatRecipientsPublicKeys
+);
 router.post(
   "/chat/:roomId/:adminUserId",
   ChatController.setMessageExpirationTime
