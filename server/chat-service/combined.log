@@ -348,3 +348,11 @@
 {"level":"info","message":"GET /api/messages/3","service":"chat-service","timestamp":"2024-06-09 16:45:26"}
 {"level":"info","message":"GET /api/rooms/3/public-keys","service":"chat-service","timestamp":"2024-06-09 16:45:26"}
 {"level":"info","message":"POST /api/rooms/3/8","service":"chat-service","timestamp":"2024-06-09 16:45:31"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:44"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:44"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:44"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:45"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:56"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:57"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:57"}
+{"level":"info","message":"GET /api/rooms/8","service":"chat-service","timestamp":"2024-06-09 17:00:57"}
