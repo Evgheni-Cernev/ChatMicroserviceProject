@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { AuthSlice, createAuthSlice } from './slices/auth.slice';
+import { UserSlice, createUserSlice } from './slices/user.slice';
 import { AccountSlice, createAccountSlice } from './slices/account.slice';
 
-export type StoreState = AuthSlice & AccountSlice;
+export type StoreState = UserSlice & AccountSlice;
 
 export const useStore = create<StoreState>()((set) => ({
-  ...createAuthSlice(set),
+  ...createUserSlice(set),
   ...createAccountSlice(set),
 }));

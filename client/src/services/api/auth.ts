@@ -8,9 +8,7 @@ export const signup = async ({
   email: string;
   password: string;
   name: string;
-}): Promise<{ token: any; user: any }> => {
-  console.log('In signup');
-
+}): Promise<any> => {
   const response = await axios({
     method: 'POST',
     url: '/register',
@@ -26,7 +24,7 @@ export const login = async ({
 }: {
   email: string;
   password: string;
-}): Promise<{ token: any; user: any }> => {
+}): Promise<any> => {
   const response = await axios({
     method: 'POST',
     url: '/login',

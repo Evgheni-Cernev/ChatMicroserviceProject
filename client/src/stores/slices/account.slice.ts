@@ -1,10 +1,10 @@
 export const createAccountSlice = (
-    set: (state: Partial<AccountSlice>) => void
+  set: (state: Partial<AccountSlice>) => void
 ) => ({
-    profiles: [],
-    setProfiles: (newProfiles: []) => set({ profiles: newProfiles }),
+  profiles: [],
+  setProfiles: (newProfiles: []) => set({ profiles: newProfiles }),
 });
 
 export type AccountSlice = {
-    profiles: string[] | null;
+  profiles: string[] | null;
 };

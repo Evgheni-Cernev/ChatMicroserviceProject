@@ -3,23 +3,34 @@ import { App } from '../components/App/App';
 import { Login } from '../components/Login/login';
 import { Signup } from '../components/Signup/signup';
 import { ChatsMenu } from '../components/ChatsMenu/chatsMenu';
+import { Chat } from '../components/Chat/chat';
+import { AuthProvider } from '../utils/providers/auth.provider';
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    Component: App,
+    // Component: App,
+    element: (
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    ),
   },
   {
     path: '/signup',
-    Component: Signup,
+    element: <Signup />,
   },
   {
     path: '/login',
-    Component: Login,
+    element: <Login />,
   },
   {
     path: '/chats',
-    Component: ChatsMenu,
+    element: <ChatsMenu />,
+  },
+  {
+    path: '/chat/:id',
+    element: <Chat />,
   },
 ];
 

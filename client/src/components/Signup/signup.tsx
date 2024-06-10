@@ -1,16 +1,18 @@
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Image, Input } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Image, Input, Typography } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '../../services/api/auth';
 import { useStore } from '../../stores/store';
 import { useEffect } from 'react';
+
+const { Title } = Typography;
 
 export const Signup = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
   const store = useStore();
-  const { setToken, token } = useStore((state) => state);
+  const { setToken, token } = useStore();
 
   useEffect(() => {
     console.log('store', store);
@@ -30,15 +32,21 @@ export const Signup = () => {
     console.log({ email, password, username });
 
     signup({ email, password, name: username })
-      .then((res) => {
+      .then((res: any) => {
         console.log('Signup res', res);
-        const { token, user = {} } = res;
-        const { id, email, username, privateKey, publicKey } = user;
-        navigate('/chats');
+        const { id, email, username, privateKey, publicKey } = res;
+
+        if (id) {
+          navigate('/login');
+        }
       })
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
   };
 
   return (
@@ -55,6 +63,9 @@ export const Signup = () => {
         preview={false}
         style={{ marginBottom: '20px' }}
       />
+      <Title level={3} style={{ marginBottom: '20px' }}>
+        Sign up
+      </Title>
       <Form.Item
         name='username'
         label='Username'
@@ -134,6 +145,12 @@ export const Signup = () => {
       <Form.Item>
         <Button type='primary' htmlType='submit'>
           Sign up
+        </Button>
+      </Form.Item>
+
+      <Form.Item>
+        <Button type='link' onClick={handleLogin}>
+          Already have an account?
         </Button>
       </Form.Item>
     </Form>
