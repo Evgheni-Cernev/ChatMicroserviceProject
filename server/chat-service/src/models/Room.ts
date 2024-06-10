@@ -39,6 +39,7 @@ export default (sequelize: Sequelize) => {
       messageExpirationTime: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 15,
       },
     },
     {

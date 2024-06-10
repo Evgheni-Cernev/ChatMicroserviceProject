@@ -92,29 +92,53 @@ export const getRoomsByUserId = async (userId: number) => {
       where: {
         id: roomIds,
       },
+      include: [
+        {
+          model: RoomParticipants,
+          as: "participants",
+          attributes: ["userId"],
+          required: true,
+        },
+      ],
     });
 
-    const roomsWithAdmin = await Promise.all(
+    const roomsWithAdminAndParticipants = await Promise.all(
       rooms.map(async (room) => {
-        const { adminUserId, ...other } = room.toJSON();
-        const user = adminUserId ? await getUserById(adminUserId) : null;
+        const { adminUserId, participants, ...other } = room.toJSON();
 
-        if (!user) {
+        // Get admin user details
+        const adminUser = adminUserId ? await getUserById(adminUserId) : null;
+        if (!adminUser) {
           return;
         }
+
+        // Get details for each participant
+        const participantsWithDetails = participants
+          ? await Promise.all(
+              participants.map(async (participant) => {
+                const user = await getUserById(participant.userId);
+                return {
+                  userId: participant.userId,
+                  username: user.username,
+                  email: user.email,
+                };
+              })
+            )
+          : null;
 
         return {
           ...other,
           adminUser: {
-            username: user.username,
-            email: user.email,
-            id: user.id,
+            username: adminUser.username,
+            email: adminUser.email,
+            id: adminUser.id,
           },
+          participants: participantsWithDetails,
         };
       })
     );
 
-    return roomsWithAdmin;
+    return roomsWithAdminAndParticipants;
   } catch (error) {
     console.error("Error while fetching rooms by user ID:", error);
     throw new Error("Failed to fetch rooms by user ID.");
